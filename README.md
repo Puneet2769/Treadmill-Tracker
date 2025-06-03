@@ -18,22 +18,6 @@ A sleek, responsive web application to help you track your treadmill workout dur
 - **CSS3** for styling and layout (with gradients, grids, and responsive design)  
 - **JavaScript** for functionality (in-browser logic & local storage)  
 
-## 📸 Preview
-
-![Treadmill Speed Tracker Screenshot](screenshot.png)
-
-## 📂 Folder Structure
-
-/treadmill-speed-tracker
-│
-├── index.html # Main HTML file with all UI and logic
-├── README.md # Project overview and instructions
-└── screenshot.png # UI preview for GitHub display (optional)
-
-bash
-Copy
-Edit
-
 ## 📦 How to Use
 
 1. **Clone the repository:**
@@ -61,8 +45,8 @@ Workout data is saved in your browser using LocalStorage, so no database or back
 🌐 Live Demo
 Add this section after deploying on GitHub Pages or Vercel
 
-🔗 Click here to try it live
-
+[🔗 Click here to try it live
+](https://puneet2769.github.io/Treadmill-Tracker/)
 🧠 Future Improvements
 Edit/Delete workout history entries
 
