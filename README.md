@@ -47,6 +47,7 @@ Add this section after deploying on GitHub Pages or Vercel
 
 [🔗 Click here to try it live
 ](https://puneet2769.github.io/Treadmill-Tracker/)
+
 🧠 Future Improvements
 Edit/Delete workout history entries
 
