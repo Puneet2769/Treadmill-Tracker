@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treadmill Speed Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .date-selector {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .date-input {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .date-input label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 1.1em;
+        }
+
+        .date-input input {
+            padding: 12px 16px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .date-input input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .tracker-section {
+            padding: 30px;
+        }
+
+        .speed-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .speed-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .speed-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .speed-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #495057;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .speed-10 {
+            border-left: 5px solid #28a745;
+        }
+
+        .speed-12 {
+            border-left: 5px solid #ffc107;
+        }
+
+        .speed-13 {
+            border-left: 5px solid #dc3545;
+        }
+
+        .custom-speed {
+            border-left: 5px solid #6f42c1;
+        }
+
+        .counter-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .counter-btn {
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.5em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .counter-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .minus-btn {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .plus-btn {
+            background: #51cf66;
+            color: white;
+        }
+
+        .minutes-display {
+            font-size: 2em;
+            font-weight: 700;
+            color: #495057;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .minutes-label {
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .save-section {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #51cf66, #40c057);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(81, 207, 102, 0.3);
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(81, 207, 102, 0.4);
+        }
+
+        .history-section {
+            margin-top: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .history-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #495057;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .history-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #667eea;
+        }
+
+        .history-date {
+            font-weight: 600;
+            color: #495057;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .history-details {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .history-speed {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .history-speed-10 {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .history-speed-12 {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .history-speed-13 {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .history-speed-custom {
+            background: #e2d9f3;
+            color: #5a2d82;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .speed-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .container {
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏃‍♂️ Treadmill Speed Tracker</h1>
+            <p>Track your daily workout progress</p>
+        </div>
+
+        <div class="date-selector">
+            <div class="date-input">
+                <label for="workout-date">Workout Date:</label>
+                <input type="date" id="workout-date">
+            </div>
+        </div>
+
+        <div class="tracker-section">
+            <div class="success-message" id="success-message">
+                Workout saved successfully! 🎉
+            </div>
+
+            <div class="speed-controls">
+                <div class="speed-card speed-10">
+                    <div class="speed-title">Speed 10</div>
+                    <div class="counter-controls">
+                        <button class="counter-btn minus-btn" onclick="changeMinutes('speed10', -1)">−</button>
+                        <div class="minutes-display" id="speed10-minutes">0</div>
+                        <button class="counter-btn plus-btn" onclick="changeMinutes('speed10', 1)">+</button>
+                    </div>
+                    <div class="minutes-label">minutes</div>
+                </div>
+
+                <div class="speed-card speed-12">
+                    <div class="speed-title">Speed 12</div>
+                    <div class="counter-controls">
+                        <button class="counter-btn minus-btn" onclick="changeMinutes('speed12', -1)">−</button>
+                        <div class="minutes-display" id="speed12-minutes">0</div>
+                        <button class="counter-btn plus-btn" onclick="changeMinutes('speed12', 1)">+</button>
+                    </div>
+                    <div class="minutes-label">minutes</div>
+                </div>
+
+                <div class="speed-card speed-13">
+                    <div class="speed-title">Speed 13</div>
+                    <div class="counter-controls">
+                        <button class="counter-btn minus-btn" onclick="changeMinutes('speed13', -1)">−</button>
+                        <div class="minutes-display" id="speed13-minutes">0</div>
+                        <button class="counter-btn plus-btn" onclick="changeMinutes('speed13', 1)">+</button>
+                    </div>
+                    <div class="minutes-label">minutes</div>
+                </div>
+            </div>
+
+            <div class="add-speed-section"
+                style="background: #f8f9fa; padding: 20px; border-radius: 15px; margin: 20px 0; border: 2px dashed #dee2e6;">
+                <h3 style="text-align: center; margin-bottom: 15px; color: #495057; font-size: 1.2em;">Add Custom Speed
+                </h3>
+                <div style="display: flex; gap: 15px; justify-content: center; align-items: center; flex-wrap: wrap;">
+                    <input type="number" id="new-speed-input" placeholder="Enter speed (e.g., 14)"
+                        style="padding: 12px 16px; border: 2px solid #dee2e6; border-radius: 10px; font-size: 1em; width: 180px; transition: all 0.3s ease;"
+                        onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102, 126, 234, 0.1)'"
+                        onblur="this.style.borderColor='#dee2e6'; this.style.boxShadow='none'">
+                    <button onclick="addNewSpeed()"
+                        style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 1em; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);"
+                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(102, 126, 234, 0.4)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(102, 126, 234, 0.3)'">➕
+                        Add Speed</button>
+                </div>
+                <p style="text-align: center; margin-top: 10px; color: #6c757d; font-size: 0.9em;">Add speeds like 8,
+                    14, 15, etc.</p>
+            </div>
+
+            <div class="save-section">
+                <button class="save-btn" onclick="saveWorkout()">Save Workout</button>
+            </div>
+        </div>
+
+        <div class="history-section">
+            <div class="history-title">Workout History</div>
+            <div id="workout-history">
+                <p style="text-align: center; color: #6c757d; font-style: italic;">No workouts recorded yet. Start
+                    tracking your progress!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize with today's date
+        document.getElementById('workout-date').valueAsDate = new Date();
+
+        // In-memory storage for workout data
+        let workoutData = {};
+        let customSpeeds = []; // Store custom speeds
+
+        function addNewSpeed() {
+            const speedInput = document.getElementById('new-speed-input');
+            const speedValue = parseInt(speedInput.value);
+
+            if (!speedValue || speedValue <= 0) {
+                alert('Please enter a valid speed number!');
+                return;
+            }
+
+            if (speedValue === 10 || speedValue === 12 || speedValue === 13) {
+                alert('This speed already exists!');
+                return;
+            }
+
+            // Check if speed already exists in custom speeds
+            if (customSpeeds.includes(speedValue)) {
+                alert('This speed has already been added!');
+                return;
+            }
+
+            customSpeeds.push(speedValue);
+            createSpeedCard(speedValue);
+            speedInput.value = '';
+        }
+
+        function createSpeedCard(speed) {
+            const speedControls = document.querySelector('.speed-controls');
+            const speedId = 'speed' + speed;
+
+            const cardHTML = `
+                <div class="speed-card custom-speed" id="card-${speedId}">
+                    <div class="speed-title">
+                        Speed ${speed}
+                        <button onclick="removeSpeed(${speed})" style="background: #ff6b6b; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; font-size: 12px; margin-left: 10px; cursor: pointer;">×</button>
+                    </div>
+                    <div class="counter-controls">
+                        <button class="counter-btn minus-btn" onclick="changeMinutes('${speedId}', -1)">−</button>
+                        <div class="minutes-display" id="${speedId}-minutes">0</div>
+                        <button class="counter-btn plus-btn" onclick="changeMinutes('${speedId}', 1)">+</button>
+                    </div>
+                    <div class="minutes-label">minutes</div>
+                </div>
+            `;
+
+            speedControls.insertAdjacentHTML('beforeend', cardHTML);
+        }
+
+        function removeSpeed(speed) {
+            if (confirm(`Are you sure you want to remove Speed ${speed}?`)) {
+                const speedId = 'speed' + speed;
+                const card = document.getElementById('card-' + speedId);
+                if (card) {
+                    card.remove();
+                }
+
+                // Remove from custom speeds array
+                customSpeeds = customSpeeds.filter(s => s !== speed);
+
+                // Remove from all saved workout data
+                Object.keys(workoutData).forEach(date => {
+                    if (workoutData[date][speedId]) {
+                        delete workoutData[date][speedId];
+                    }
+                });
+
+                updateHistoryDisplay();
+            }
+        }
+
+        function changeMinutes(speed, change) {
+            const element = document.getElementById(speed + '-minutes');
+            let currentValue = parseInt(element.textContent);
+            let newValue = Math.max(0, currentValue + change);
+            element.textContent = newValue;
+        }
+
+        function saveWorkout() {
+            const date = document.getElementById('workout-date').value;
+            if (!date) {
+                alert('Please select a date first!');
+                return;
+            }
+
+            // Get all speed values (default + custom)
+            const workoutEntry = {};
+            let totalMinutes = 0;
+            let hasWorkout = false;
+
+            // Default speeds
+            ['speed10', 'speed12', 'speed13'].forEach(speedId => {
+                const minutes = parseInt(document.getElementById(speedId + '-minutes').textContent);
+                workoutEntry[speedId] = minutes;
+                totalMinutes += minutes;
+                if (minutes > 0) hasWorkout = true;
+            });
+
+            // Custom speeds
+            customSpeeds.forEach(speed => {
+                const speedId = 'speed' + speed;
+                const element = document.getElementById(speedId + '-minutes');
+                if (element) {
+                    const minutes = parseInt(element.textContent);
+                    workoutEntry[speedId] = minutes;
+                    totalMinutes += minutes;
+                    if (minutes > 0) hasWorkout = true;
+                }
+            });
+
+            if (!hasWorkout) {
+                alert('Please add at least some workout time!');
+                return;
+            }
+
+            workoutEntry.totalMinutes = totalMinutes;
+
+            // Save to memory
+            workoutData[date] = workoutEntry;
+
+            // Show success message
+            const successMsg = document.getElementById('success-message');
+            successMsg.style.display = 'block';
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 3000);
+
+            // Reset all counters
+            document.querySelectorAll('.minutes-display').forEach(display => {
+                display.textContent = '0';
+            });
+
+            // Update history display
+            updateHistoryDisplay();
+        }
+
+        function updateHistoryDisplay() {
+            const historyContainer = document.getElementById('workout-history');
+
+            if (Object.keys(workoutData).length === 0) {
+                historyContainer.innerHTML = '<p style="text-align: center; color: #6c757d; font-style: italic;">No workouts recorded yet. Start tracking your progress!</p>';
+                return;
+            }
+
+            // Sort dates in descending order (newest first)
+            const sortedDates = Object.keys(workoutData).sort((a, b) => new Date(b) - new Date(a));
+
+            let historyHTML = '';
+            sortedDates.forEach(date => {
+                const workout = workoutData[date];
+                const formattedDate = new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                historyHTML += `
+                    <div class="history-item">
+                        <div class="history-date">${formattedDate}</div>
+                        <div class="history-details">
+                `;
+
+                // Show all speeds with minutes > 0
+                Object.keys(workout).forEach(key => {
+                    if (key !== 'totalMinutes' && workout[key] > 0) {
+                        const speedNumber = key.replace('speed', '');
+                        const colorClass = getSpeedColorClass(speedNumber);
+                        historyHTML += `<span class="history-speed ${colorClass}">Speed ${speedNumber}: ${workout[key]} min</span>`;
+                    }
+                });
+
+                historyHTML += `
+                            <span style="margin-left: auto; font-weight: 600; color: #495057;">Total: ${workout.totalMinutes} min</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            historyContainer.innerHTML = historyHTML;
+        }
+
+        function getSpeedColorClass(speedNumber) {
+            if (speedNumber === '10') return 'history-speed-10';
+            if (speedNumber === '12') return 'history-speed-12';
+            if (speedNumber === '13') return 'history-speed-13';
+            return 'history-speed-custom';
+        }
+
+        // Load data for selected date
+        document.getElementById('workout-date').addEventListener('change', function () {
+            const selectedDate = this.value;
+            if (workoutData[selectedDate]) {
+                const workout = workoutData[selectedDate];
+
+                // Load default speeds
+                ['speed10', 'speed12', 'speed13'].forEach(speedId => {
+                    const element = document.getElementById(speedId + '-minutes');
+                    if (element && workout[speedId] !== undefined) {
+                        element.textContent = workout[speedId];
+                    }
+                });
+
+                // Load custom speeds
+                customSpeeds.forEach(speed => {
+                    const speedId = 'speed' + speed;
+                    const element = document.getElementById(speedId + '-minutes');
+                    if (element && workout[speedId] !== undefined) {
+                        element.textContent = workout[speedId];
+                    }
+                });
+            } else {
+                // Reset all to 0 if no data for this date
+                document.querySelectorAll('.minutes-display').forEach(display => {
+                    display.textContent = '0';
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
